@@ -128,7 +128,7 @@ EOF
 # create /usr/bin/bastion/sync_s3
 cat > /usr/bin/bastion/sync_s3 << 'EOF'
 S3_BASTION_BUCKET=${s3_bucket_name}
-AWS_REGION=${aws_region}
+AWS_REGION=us-east-2
 BASTION_PUBLIC_KEYS_FOLDER=public_keys
 
 # The file will log user changes
