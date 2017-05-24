@@ -113,7 +113,7 @@ service sshd restart
 # /home/username/.ssh/authorized_keys
 
 # create /usr/bin/bastion/sync_s3
-cat > /usr/bin/bastion/sync_users << 'EOF'
+cat > /usr/bin/bastion/sync_s3 << 'EOF'
 # Copy log files to S3 with server-side encryption enabled.
 # Then, if successful, delete log files that are older than a day.
 LOG_DIR="/var/log/bastion/"
@@ -125,8 +125,8 @@ EOF
 
 #####
 
-# create /usr/bin/bastion/sync_s3
-cat > /usr/bin/bastion/sync_s3 << 'EOF'
+# create /usr/bin/bastion/sync_users
+cat > /usr/bin/bastion/sync_users << 'EOF'
 S3_BASTION_BUCKET=${s3_bucket_name}
 AWS_REGION=us-east-2
 BASTION_PUBLIC_KEYS_FOLDER=public_keys
@@ -151,6 +151,7 @@ while read line; do
     # Create a user account if it does not already exist
     cut -d: -f1 /etc/passwd | grep -qx $USER_NAME
     if [ $? -eq 1 ]; then
+      mkdir -p /home/$USER_NAME/
       /usr/sbin/useradd $USER_NAME -p changeme && \
       mkdir -m 700 /home/$USER_NAME/.ssh && \
       chown $USER_NAME:$USER_NAME /home/$USER_NAME/.ssh && \
