@@ -44,6 +44,7 @@ echo "X11Forwarding no" >> /etc/ssh/sshd_config
 mkdir /usr/bin/bastion
 
 cat > /usr/bin/bastion/shell << 'EOF'
+#!/bin/bash
 
 # Check that the SSH client did not supply a command
 if [[ -z $SSH_ORIGINAL_COMMAND ]]; then
@@ -114,6 +115,8 @@ service sshd restart
 
 # create /usr/bin/bastion/sync_s3
 cat > /usr/bin/bastion/sync_s3 << 'EOF'
+#!/bin/bash
+
 # Copy log files to S3 with server-side encryption enabled.
 # Then, if successful, delete log files that are older than a day.
 LOG_DIR="/var/log/bastion/"
@@ -127,6 +130,8 @@ EOF
 
 # create /usr/bin/bastion/sync_users
 cat > /usr/bin/bastion/sync_users << 'EOF'
+#!/bin/bash
+
 S3_BASTION_BUCKET=${s3_bucket_name}
 AWS_REGION=us-east-2
 BASTION_PUBLIC_KEYS_FOLDER=public_keys
