@@ -200,8 +200,8 @@ chmod 700 /usr/bin/bastion/sync_users
 chmod 700 /usr/bin/bastion/sync_s3
 
 cat > ~/mycron << EOF
-${keys_update_frequency} /usr/bin/bastion/sync_s3
-${keys_update_frequency} /usr/bin/bastion/sync_users
+${keys_update_frequency} sudo /usr/bin/bastion/sync_s3
+${keys_update_frequency} sudo /usr/bin/bastion/sync_users
 # 0 0 * * * yum -y update --security
 EOF
 crontab ~/mycron
