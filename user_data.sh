@@ -163,7 +163,7 @@ while read line; do
     if [ -f ~/keys_installed ]; then
       grep -qx "$line" ~/keys_installed
       if [ $? -eq 0 ]; then
-        aws s3 cp s3://$S3_BASTION_BUCKET/$line /home/$USER_NAME/.ssh/authorized_keys --region AWS_REGION
+        aws s3 cp s3://$S3_BASTION_BUCKET/$line /home/$USER_NAME/.ssh/authorized_keys --region $AWS_REGION
         chmod 600 /home/$USER_NAME/.ssh/authorized_keys
         chown $USER_NAME:$USER_NAME /home/$USER_NAME/.ssh/authorized_keys
       fi
