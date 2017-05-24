@@ -118,7 +118,8 @@ cat > /usr/bin/bastion/sync_users << 'EOF'
 # Then, if successful, delete log files that are older than a day.
 LOG_DIR="/var/log/bastion/"
 S3_BASTION_BUCKET=${s3_bucket_name}
-aws s3 cp $LOG_DIR s3://$S3_BASTION_BUCKET/logs/ --sse --region region --recursive && find $LOG_DIR* -mtime +1 -exec rm {} \;
+AWS_REGION=${region}
+aws s3 cp $LOG_DIR s3://$S3_BASTION_BUCKET/logs/ --sse --region $AWS_REGION --recursive && find $LOG_DIR* -mtime +1 -exec rm {} \;
 
 EOF
 
@@ -127,6 +128,7 @@ EOF
 # create /usr/bin/bastion/sync_s3
 cat > /usr/bin/bastion/sync_s3 << 'EOF'
 S3_BASTION_BUCKET=${s3_bucket_name}
+AWS_REGION=${region}
 BASTION_PUBLIC_KEYS_FOLDER=public_keys
 
 # The file will log user changes
@@ -139,7 +141,7 @@ get_user_name () {
 }
 
 # For each public key available in the S3 bucket
-aws s3api list-objects --bucket $S3_BASTION_BUCKET --region us-east-2 --prefix $BASTION_PUBLIC_KEYS_FOLDER --output text --query 'Contents[?Size>`0`].Key' | sed -e 'y/\t/\n/' > /home/ubuntu/keys_retrieved_from_s3
+aws s3api list-objects --bucket $S3_BASTION_BUCKET --region $AWS_REGION --prefix $BASTION_PUBLIC_KEYS_FOLDER --output text --query 'Contents[?Size>`0`].Key' | sed -e 'y/\t/\n/' > /home/ubuntu/keys_retrieved_from_s3
 while read line; do
   USER_NAME="`get_user_name "$line"`"
 
@@ -161,7 +163,7 @@ while read line; do
     if [ -f ~/keys_installed ]; then
       grep -qx "$line" ~/keys_installed
       if [ $? -eq 0 ]; then
-        aws s3 cp s3://$S3_BASTION_BUCKET/$line /home/$USER_NAME/.ssh/authorized_keys --region us-east-2 
+        aws s3 cp s3://$S3_BASTION_BUCKET/$line /home/$USER_NAME/.ssh/authorized_keys --region AWS_REGION
         chmod 600 /home/$USER_NAME/.ssh/authorized_keys
         chown $USER_NAME:$USER_NAME /home/$USER_NAME/.ssh/authorized_keys
       fi
