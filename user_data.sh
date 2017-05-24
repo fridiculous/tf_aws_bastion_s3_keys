@@ -128,7 +128,7 @@ EOF
 # create /usr/bin/bastion/sync_s3
 cat > /usr/bin/bastion/sync_s3 << 'EOF'
 S3_BASTION_BUCKET=${s3_bucket_name}
-AWS_REGION=us-east-2
+AWS_REGION=${aws_region}
 BASTION_PUBLIC_KEYS_FOLDER=public_keys
 
 # The file will log user changes
@@ -141,7 +141,7 @@ get_user_name () {
 }
 
 # For each public key available in the S3 bucket
-aws s3api list-objects --bucket $S3_BASTION_BUCKET --region $AWS_REGION --prefix $BASTION_PUBLIC_KEYS_FOLDER --output text --query 'Contents[?Size>`0`].Key' | sed -e 'y/\t/\n/' > /home/ubuntu/keys_retrieved_from_s3
+aws s3api list-objects --bucket $S3_BASTION_BUCKET --region $AWS_REGION --prefix $BASTION_PUBLIC_KEYS_FOLDER --output text --query 'Contents[?Size>`0`].Key' | sed -e 'y/\t/\n/' > ~/keys_retrieved_from_s3
 while read line; do
   USER_NAME="`get_user_name "$line"`"
 
