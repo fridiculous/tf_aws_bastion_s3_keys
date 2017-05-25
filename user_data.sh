@@ -121,7 +121,7 @@ cat > /usr/bin/bastion/sync_s3 << 'EOF'
 # Then, if successful, delete log files that are older than a day.
 LOG_DIR="/var/log/bastion/"
 S3_BASTION_BUCKET=${s3_bucket_name}
-AWS_REGION=${region}
+AWS_REGION=${aws_region}
 aws s3 cp $LOG_DIR s3://$S3_BASTION_BUCKET/logs/ --sse --region $AWS_REGION --recursive && find $LOG_DIR* -mtime +1 -exec rm {} \;
 
 EOF
@@ -133,7 +133,7 @@ cat > /usr/bin/bastion/sync_users << 'EOF'
 #!/bin/bash
 
 S3_BASTION_BUCKET=${s3_bucket_name}
-AWS_REGION=${region}
+AWS_REGION=${aws_region}
 BASTION_PUBLIC_KEYS_FOLDER=public_keys
 
 # The file will log user changes
@@ -155,7 +155,7 @@ while read line; do
 
     # Create a user account if it does not already exist
     cut -d: -f1 /etc/passwd | grep -qx $USER_NAME
-    if [ $? -eq 1 ]; then
+    if [ $? -eq 0 ]; then
       mkdir -p /home/$USER_NAME/.ssh/
       touch /home/$USER_NAME/.ssh/authorized_keys
       /usr/sbin/useradd $USER_NAME -p changeme && \
@@ -169,7 +169,7 @@ while read line; do
     # from this key
     if [ -f ~/keys_installed ]; then
       grep -qx "$line" ~/keys_installed
-      if [ $? -eq 0 ]; then
+      if [ $? -eq 1 ]; then
         aws s3 cp s3://$S3_BASTION_BUCKET/$line /home/$USER_NAME/.ssh/authorized_keys --region $AWS_REGION
         chmod 600 /home/$USER_NAME/.ssh/authorized_keys
         chown $USER_NAME:$USER_NAME /home/$USER_NAME/.ssh/authorized_keys
