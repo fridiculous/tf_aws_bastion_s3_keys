@@ -155,11 +155,10 @@ while read line; do
 
     # Create a user account if it does not already exist
     cut -d: -f1 /etc/passwd | grep -qx $USER_NAME
-    if [ $? -eq 0 ]; then
-      mkdir -p /home/$USER_NAME/.ssh/
-      touch /home/$USER_NAME/.ssh/authorized_keys
+    if [ $? -eq 1 ]; then
       /usr/sbin/useradd $USER_NAME -p changeme && \
-      mkdir -m 700 /home/$USER_NAME/.ssh && \
+      mkdir -p -m 700 /home/$USER_NAME/.ssh && \
+      touch /home/$USER_NAME/.ssh/authorized_keys && \
       chown $USER_NAME:$USER_NAME /home/$USER_NAME/.ssh && \
       echo "$line" >> ~/keys_installed && \
       echo "`date --date="today" "+%Y-%m-%d %H-%M-%S"`: Creating user account for $USER_NAME ($line)" >> $LOG_FILE
@@ -169,13 +168,12 @@ while read line; do
     # from this key
     if [ -f ~/keys_installed ]; then
       grep -qx "$line" ~/keys_installed
-      if [ $? -eq 1 ]; then
+      if [ $? -eq 0 ]; then
         aws s3 cp s3://$S3_BASTION_BUCKET/$line /home/$USER_NAME/.ssh/authorized_keys --region $AWS_REGION
         chmod 600 /home/$USER_NAME/.ssh/authorized_keys
         chown $USER_NAME:$USER_NAME /home/$USER_NAME/.ssh/authorized_keys
       fi
     fi
-
   fi
 done < ~/keys_retrieved_from_s3
 
