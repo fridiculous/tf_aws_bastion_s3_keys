@@ -121,7 +121,7 @@ cat > /usr/bin/bastion/sync_s3 << 'EOF'
 # Then, if successful, delete log files that are older than a day.
 LOG_DIR="/var/log/bastion/"
 S3_BASTION_BUCKET=${s3_bucket_name}
-AWS_REGION=${aws_region}
+AWS_REGION=${region}
 aws s3 cp $LOG_DIR s3://$S3_BASTION_BUCKET/logs/ --sse --region $AWS_REGION --recursive && find $LOG_DIR* -mtime +1 -exec rm {} \;
 
 EOF
@@ -133,7 +133,7 @@ cat > /usr/bin/bastion/sync_users << 'EOF'
 #!/bin/bash
 
 S3_BASTION_BUCKET=${s3_bucket_name}
-AWS_REGION=${aws_region}
+AWS_REGION=${region}
 BASTION_PUBLIC_KEYS_FOLDER=public_keys
 
 # The file will log user changes

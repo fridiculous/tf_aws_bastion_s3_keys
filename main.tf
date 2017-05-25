@@ -37,7 +37,7 @@ data "template_file" "user_data" {
     s3_bucket_name              = "${var.s3_bucket_name}"
     s3_bucket_uri               = "${var.s3_bucket_uri}"
     ssh_user                    = "${var.ssh_user}"
-    aws_region                  = "${var.region}"
+    region                      = "${var.region}"
     keys_update_frequency       = "${var.keys_update_frequency}"
     enable_hourly_cron_updates  = "${var.enable_hourly_cron_updates}"
     additional_user_data_script = "${var.additional_user_data_script}"
