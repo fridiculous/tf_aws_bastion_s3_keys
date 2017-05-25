@@ -156,7 +156,8 @@ while read line; do
     # Create a user account if it does not already exist
     cut -d: -f1 /etc/passwd | grep -qx $USER_NAME
     if [ $? -eq 1 ]; then
-      mkdir -p /home/$USER_NAME/
+      mkdir -p /home/$USER_NAME/.ssh/
+      touch /home/$USER_NAME/.ssh/authorized_keys
       /usr/sbin/useradd $USER_NAME -p changeme && \
       mkdir -m 700 /home/$USER_NAME/.ssh && \
       chown $USER_NAME:$USER_NAME /home/$USER_NAME/.ssh && \
