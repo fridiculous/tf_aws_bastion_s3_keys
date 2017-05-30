@@ -207,6 +207,8 @@ crontab ~/mycron
 rm ~/mycron
 
 
+${additional_user_data_script}
+
 
 # cat <<"EOF" > /home/${ssh_user}/update_ssh_authorized_keys.sh
 # #!/usr/bin/env bash
